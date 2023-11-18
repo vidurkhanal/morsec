@@ -1,0 +1,5 @@
+(library
+(name morsec)
+(public_name morsec)
+(libraries base)
+)
