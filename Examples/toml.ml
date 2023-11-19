@@ -11,8 +11,8 @@ let print_root (v : root) =
       print_endline ("[" ^ title ^ "]");
       List.iter (fun (k, v) -> print_endline (k ^ " = " ^ v)) properties
 
-let toml_parser : root Morsec.parser =
-  failwith "TODO: initialize Morsec not IMPLEMENTED"
+(* let toml_parser : root Morsec.parser = *)
+(*   failwith "TODO: initialize Morsec not IMPLEMENTED" *)
 
 let read_file (file_path : string) : string =
   let ch = open_in file_path in
@@ -25,10 +25,19 @@ let read_file (file_path : string) : string =
 (*   let result = "test.toml" |> read_file in *)
 (*   print_endline result *)
 
+(* let () = *)
+(*   let result = *)
+(*     "./test.toml" |> read_file |> Morsec.transform |> toml_parser.parse *)
+(*   in *)
+(*   match result with *)
+(*   | Ok (_, v) -> v |> print_root *)
+(*   | Error _ -> print_endline "ERROR" *)
+
 let () =
   let result =
-    "./test.toml" |> read_file |> Morsec.transform |> toml_parser.parse
+    "HelloWorld" |> Morsec.transform
+    |> (Morsec.prefix "Hello" *> Morsec.prefix "World").parse
   in
   match result with
-  | Ok (_, v) -> v |> print_root
+  | Ok (a, b) -> a.text ^ " " ^ b |> print_endline
   | Error _ -> print_endline "ERROR"
