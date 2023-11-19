@@ -28,6 +28,18 @@ let bind (f : 'a -> 'b parser) (p : 'a parser) : 'b parser =
         | Error error -> Error error);
   }
 
+let while_parse (predicate : char -> bool) : string parser =
+  {
+    parse =
+      (fun input ->
+        let n = String.length input.text in
+        let i = ref 0 in
+        while String.get input.text !i |> predicate && !i < n do
+          incr i
+        done;
+        Ok (morsec_str_sub !i (n - !i) input, String.sub input.text 0 !i));
+  }
+
 let prefix (prefix' : string) : string parser =
   {
     parse =
@@ -84,3 +96,23 @@ let ( <*> ) (p : 'a parser) (q : 'b parser) : ('a * 'b) parser =
                |> Result.map (fun (input, y) -> (input, (x, y))))
         |> Result.join);
   }
+
+let ( <|> ) (p : 'a parser) (q : 'a parser) : 'a parser =
+  {
+    parse =
+      (fun input ->
+        match input |> p.parse with
+        | Ok (input', x) -> Ok (input', x)
+        | Error e ->
+            input |> q.parse
+            |> Result.map_error (fun e' ->
+                   {
+                     position = e.position;
+                     message =
+                       Printf.sprintf "Something went wrong. Either %s or %s"
+                         e.message e'.message;
+                   }));
+  }
+
+let optional (_p : 'a parser) : 'a option parser =
+  failwith "TODO: OPTIONAL PARSER YET TO BE IMPLEMENTED."
