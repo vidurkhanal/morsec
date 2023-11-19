@@ -1,2 +1,2 @@
 # morsec
-Ocaml implementation of Ocaml's Parsec
+Ocaml implementation of Haskel's Parsec
