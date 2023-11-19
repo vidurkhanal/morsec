@@ -15,3 +15,12 @@ let map (f : 'a -> 'b) (p : 'a parser) : 'b parser =
         | Ok (input', x) -> Ok (input', f x)
         | Error err -> Error err);
   }
+
+let bind (f : 'a -> 'b parser) (p : 'a parser) : 'b parser =
+  {
+    parse =
+      (fun input ->
+        match p.parse input with
+        | Ok (input', x) -> (f x).parse input'
+        | Error error -> Error error);
+  }
